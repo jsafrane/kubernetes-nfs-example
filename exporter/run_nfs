@@ -1,0 +1,62 @@
+#!/bin/bash
+
+function start()
+{
+
+    # prepare /etc/exports
+    for i in "$@"; do
+        echo "$i *(rw,sync,no_root_squash)" >> /etc/exports
+        echo "Serving $i"
+    done
+
+    # from /lib/systemd/system/proc-fs-nfsd.mount
+    mount -t nfsd nfds /proc/fs/nfsd
+
+    # from /lib/systemd/system/rpcbind.service
+    . /etc/sysconfig/rpcbind
+    /sbin/rpcbind -w ${RPCBIND_ARGS}
+
+    # from /lib/systemd/system/nfs-config.service
+    /usr/lib/systemd/scripts/nfs-utils_env.sh
+
+    # from /lib/systemd/system/nfs-mountd.service
+    . /run/sysconfig/nfs-utils
+    /usr/sbin/rpc.mountd $RPCMOUNTDARGS
+
+    # from /lib/systemd/system/nfs-server.service
+    . /run/sysconfig/nfs-utils
+    /usr/sbin/exportfs -r
+    /usr/sbin/rpc.nfsd $RPCNFSDARGS
+
+    echo "NFS started"
+}
+
+function stop()
+{
+    echo "Stopping NFS"
+
+    # from /lib/systemd/system/nfs-server.service
+    /usr/sbin/rpc.nfsd 0
+    /usr/sbin/exportfs -au
+    /usr/sbin/exportfs -f
+
+    # from /lib/systemd/system/nfs-mountd.service
+    kill $( pidof rpc.mountd )
+    # from /lib/systemd/system/rpcbind.service
+    kill $( pidof rpcbind )
+    # from /lib/systemd/system/proc-fs-nfsd.mount
+    umount /proc/fs/nfsd
+
+    echo > /etc/exports
+    exit 0
+}
+
+
+trap stop TERM
+
+start "$@"
+
+# Ugly hack to do nothing and wait for SIGTERM
+while true; do
+    read
+done
