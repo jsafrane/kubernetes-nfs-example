@@ -19,7 +19,7 @@ function start()
 
     # prepare /etc/exports
     for i in "$@"; do
-        echo "$i *(rw,sync,no_root_squash)" >> /etc/exports
+        echo "$i *(rw,sync,no_root_squash,fsid=0)" >> /etc/exports
         echo "Serving $i"
     done
 
@@ -56,8 +56,6 @@ function stop()
 
     # from /lib/systemd/system/nfs-mountd.service
     kill $( pidof rpc.mountd )
-    # from /lib/systemd/system/rpcbind.service
-    kill $( pidof rpcbind )
     # from /lib/systemd/system/proc-fs-nfsd.mount
     umount /proc/fs/nfsd
 
