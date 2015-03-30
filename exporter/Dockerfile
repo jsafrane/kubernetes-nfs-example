@@ -1,6 +1,6 @@
 FROM fedora:21
 MAINTAINER Jan Safranek <jsafrane@redhat.com>
-EXPOSE 111/udp 2049/tcp
+EXPOSE 2049/tcp
 
 RUN yum -y install nfs-utils
 RUN yum clean all
