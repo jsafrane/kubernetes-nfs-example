@@ -2,7 +2,8 @@
 
 ## NFS server part
 
-Define [NFS server pod](nfs-pod.yaml) and [NFS service](nfs-service.yaml):
+Define [NFS server pod](nfs-server-pod.yaml) and
+[NFS service](nfs-server-service.yaml):
 
     $ kubectl create -f nfs-server-pod.yaml
     $ kubectl create -f nfs-server-service.yaml
@@ -13,7 +14,9 @@ Wait until the pod is running!
 TODO: export content of a Google cloud volume.
 
 ## NFS client (the example)
-Simple web server, serving data from NFS server 
+Define [WEB server pod](web-pod.yaml), which runs a simple web server serving
+data from the NFS. See the [yaml](web-pod.yaml) file for an example how NFS
+volume is imported.
 
     $ kubectl create -f web-pod.yaml
 
