@@ -19,7 +19,7 @@ function start()
 
     # prepare /etc/exports
     for i in "$@"; do
-        echo "$i *(rw,sync,no_root_squash,fsid=0)" >> /etc/exports
+        echo "$i *(rw,sync,no_root_squash,insecure,fsid=0)" >> /etc/exports
         echo "Serving $i"
     done
 
