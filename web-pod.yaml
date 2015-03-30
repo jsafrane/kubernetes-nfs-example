@@ -1,0 +1,25 @@
+apiVersion: v1beta1
+desiredState:
+  manifest:
+    containers:
+      - name: web
+        image: dockerfile/nginx
+        volumeMounts:
+            # name must match the volume name below
+            - name: nfs
+              mountPath: "/var/www/html"
+        ports:
+          - name: web
+            containerPort: 80
+            protocol: tcp
+    id: web
+    version: v1beta1
+    volumes:
+      - name: nfs
+        source:
+          nfs:
+            server: 10.254.26.135 # TODO: use service name
+            path: "/"
+            readOnly: false
+id: web
+kind: Pod

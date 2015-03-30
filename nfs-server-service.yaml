@@ -1,0 +1,7 @@
+id: nfs-server
+kind: Service
+apiVersion: v1beta1
+port: 2049
+protocol: tcp
+selector:
+  name: nfs-server
