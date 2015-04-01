@@ -18,7 +18,8 @@ desiredState:
       - name: nfs
         source:
           nfs:
-            server: 10.254.26.135 # TODO: use service name
+            # FIXME: use the right name
+            server: nfs-server.default.kube.local
             path: "/"
             readOnly: false
 id: web
