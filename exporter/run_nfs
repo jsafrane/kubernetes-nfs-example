@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright 2015 Red Hat Inc.
 #
@@ -14,51 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-function start()
-{
+start() {
 
     # prepare /etc/exports
+    rm /etc/exports
     for i in "$@"; do
-        echo "$i *(rw,sync,no_root_squash,insecure,fsid=0)" >> /etc/exports
+        echo "$i *(rw,sync,no_root_squash,insecure,no_subtree_check,fsid=0)" >> /etc/exports
         echo "Serving $i"
     done
 
-    # from /lib/systemd/system/proc-fs-nfsd.mount
     mount -t nfsd nfds /proc/fs/nfsd
-
-    # from /lib/systemd/system/rpcbind.service
-#    . /etc/sysconfig/rpcbind
-#    /sbin/rpcbind -w ${RPCBIND_ARGS}
-
-    # from /lib/systemd/system/nfs-config.service
-    /usr/lib/systemd/scripts/nfs-utils_env.sh
-
-    # from /lib/systemd/system/nfs-mountd.service
-    . /run/sysconfig/nfs-utils
-    /usr/sbin/rpc.mountd $RPCMOUNTDARGS
-
-    # from /lib/systemd/system/nfs-server.service
-    . /run/sysconfig/nfs-utils
+    mkdir -p /var/lib/nfs
     /usr/sbin/exportfs -r
-    /usr/sbin/rpc.nfsd -N 2 -N 3 -V 4 -V 4.1 $RPCNFSDARGS
+    /usr/sbin/rpc.mountd -V 4 -N 2 -N 3
+    /usr/sbin/rpc.nfsd -N 2 -N 3 -V 4 -V 4.1 4
 
     echo "NFS started"
 }
 
-function stop()
-{
+stop() {
+
     echo "Stopping NFS"
 
-    # from /lib/systemd/system/nfs-server.service
     /usr/sbin/rpc.nfsd 0
     /usr/sbin/exportfs -au
     /usr/sbin/exportfs -f
-
-    # from /lib/systemd/system/nfs-mountd.service
     kill $( pidof rpc.mountd )
-    # from /lib/systemd/system/proc-fs-nfsd.mount
     umount /proc/fs/nfsd
-
     echo > /etc/exports
     exit 0
 }

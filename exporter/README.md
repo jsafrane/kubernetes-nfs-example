@@ -1,7 +1,7 @@
 # NFS-exporter container
 
 Inspired by https://github.com/cpuguy83/docker-nfs-server. Rewritten for
-Fedora, just to get some Docker skills.
+OpenWRT to reduce its size.
 
 Available in dockerhub as
 [jsafrane/nfsexporter](https://registry.hub.docker.com/u/jsafrane/nfsexporter/).
