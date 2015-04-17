@@ -26,6 +26,7 @@ start() {
     mount -t nfsd nfds /proc/fs/nfsd
     mkdir -p /var/lib/nfs
     /usr/sbin/exportfs -r
+    portmap
     /usr/sbin/rpc.mountd -V 4 -N 2 -N 3
     /usr/sbin/rpc.nfsd -N 2 -N 3 -V 4 -V 4.1 4
 
