@@ -27,8 +27,8 @@ function start()
     mount -t nfsd nfds /proc/fs/nfsd
 
     # from /lib/systemd/system/rpcbind.service
-#    . /etc/sysconfig/rpcbind
-#    /sbin/rpcbind -w ${RPCBIND_ARGS}
+    . /etc/sysconfig/rpcbind
+    /usr/sbin/rpcbind -w ${RPCBIND_ARGS}
 
     # from /lib/systemd/system/nfs-config.service
     /usr/lib/systemd/scripts/nfs-utils_env.sh
@@ -40,7 +40,7 @@ function start()
     # from /lib/systemd/system/nfs-server.service
     . /run/sysconfig/nfs-utils
     /usr/sbin/exportfs -r
-    /usr/sbin/rpc.nfsd -N 2 -N 3 -V 4 -V 4.1 $RPCNFSDARGS
+    /usr/sbin/rpc.nfsd -N 2 -V 3 -V 4 -V 4.1 $RPCNFSDARGS
 
     echo "NFS started"
 }
